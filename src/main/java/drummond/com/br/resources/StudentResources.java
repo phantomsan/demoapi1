@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,6 +65,23 @@ public class StudentResources {
 		else
 			return new ResponseEntity<Student>(student.get(), HttpStatus.NO_CONTENT);
 	}
+	
+	@Cacheable(value="studentsCache")
+	@RequestMapping(value = "/students2/{ra}", method = RequestMethod.GET)
+	public ResponseEntity<?> obterAlunoRa2(@PathVariable Integer ra) throws InterruptedException {
+		
+		Optional<Student> student; // Optional: container objeto.
+		
+		student = studentRepository.findById(ra);
+		Thread.sleep(5000); 
+
+		if (student.isPresent())
+			return new ResponseEntity<Student>(student.get(), HttpStatus.OK);
+		else
+			return new ResponseEntity<Student>(student.get(), HttpStatus.NO_CONTENT);
+	}
+	
+	
 	
 	/**
 	 * Inserir um novo aluno
